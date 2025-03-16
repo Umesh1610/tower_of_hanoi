@@ -2,10 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Tower of Hanoi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower of Hanoi - Interstellar</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Canvas for star particles -->
+    <canvas id="starfield"></canvas>
+    <!-- Black hole effect -->
+    <div id="black-hole"></div>
+
     <h1>Tower of Hanoi</h1>
     <label for="discs">Number of Discs (3-8):</label>
     <input type="number" id="discs" min="3" max="8" value="3">
@@ -25,8 +32,10 @@
             <div class="peg" id="peg3"></div>
         </div>
         <div class="base"></div>
+        <div id="win-animation"></div>
     </div>
-    <audio id="moveSound" src="button.mp3"></audio>
+    <!-- Cornfield Chase background music -->
+    <audio id="backgroundMusic" src="Hans.mp3" loop></audio>
     <script src="script.js"></script>
 </body>
 </html>
