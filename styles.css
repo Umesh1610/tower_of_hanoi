@@ -1,88 +1,217 @@
+/* Reset default margins and ensure full-screen canvas */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body with cosmic background */
 body {
     text-align: center;
-    font-family: Arial, sans-serif;
-    background: #f0f4f8;
-    transition: background 0.5s;
+    font-family: 'Orbitron', sans-serif;
+    background: url('https://www.nasa.gov/sites/default/files/thumbnails/image/hubble_ngc602.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+    min-height: 100vh;
 }
+
+/* Dark overlay for contrast */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: -1;
+}
+
+/* Starfield canvas */
+#starfield {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* Black hole effect */
+#black-hole {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.9) 20%, transparent 70%);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 1;
+    animation: blackHoleFade 5s ease-in-out forwards;
+}
+
+/* Title styling */
 h1 {
-    color: #2c3e50;
+    color: #00d4ff;
+    text-shadow: 0 0 10px #00d4ff;
+    margin: 20px 0;
 }
+
+/* Input and button styling */
+label, input, button {
+    font-family: 'Orbitron', sans-serif;
+    color: #fff;
+    margin: 5px;
+}
+input {
+    background: #1e90ff;
+    border: 1px solid #00d4ff;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+}
+button {
+    background: #ff4500;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-shadow: 0 0 5px #ff4500;
+}
+button:hover {
+    background: #ff6347;
+}
+
+/* Game container */
 #game {
     display: flex;
     justify-content: space-around;
     margin-top: 20px;
     position: relative;
-    height: 400px; /* Increased to accommodate base */
+    height: 400px;
+    z-index: 2;
 }
+
+/* Peg container */
 .peg-container {
     position: relative;
     width: 200px;
+    height: 100%;
 }
+
+/* Peg labels (holographic) */
 .peg-label {
     position: absolute;
-    top: -20px;
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
     font-weight: bold;
-    color: #333;
+    color: #00d4ff;
+    text-shadow: 0 0 5px #00d4ff;
+    z-index: 3;
 }
+
+/* Pegs styled as wormhole portals */
 .peg {
-    width: 10px;
+    width: 8px;
     height: 300px;
-    background: #7f8c8d; /* Gray pole */
+    background: linear-gradient(to bottom, #00d4ff, #1e90ff);
     position: absolute;
-    bottom: 50px; /* Above base */
+    bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
     cursor: pointer;
     z-index: 1;
     border-radius: 5px;
+    box-shadow: 0 0 15px #00d4ff;
+    animation: pulse 2s infinite;
 }
+
+/* Discs styled as TARS/CASE */
 .disc {
-    width: 40px; /* Base width for smallest disc */
-    height: 40px;
+    width: 40px;
+    height: 20px;
     margin: 2px auto;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 50px; /* Start above base */
-    border-radius: 50%; /* Circular */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    bottom: 50px;
+    background: #2f4f4f; /* Metallic gray */
+    border: 2px solid #00d4ff; /* Glowing edge */
+    box-shadow: 0 0 10px #00d4ff;
     z-index: 2;
-    /* Create hole in the center */
-    background: radial-gradient(circle at center, #7f8c8d 10%, transparent 12%, transparent 100%);
 }
+.disc::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: transparent;
+    border: 1px solid #1e90ff;
+    z-index: 3;
+}
+
+/* Bounce animation for disc movement */
 .disc.bounce {
     animation: bounce 0.5s ease;
 }
+
+/* Highlight for selected disc */
 .disc.selected-disc {
     box-shadow: 0 0 15px #ffeb3b, 0 0 25px #ffeb3b;
     border: 3px solid #ffeb3b;
     transform: translateX(-50%) scale(1.1);
 }
+
+/* Highlight for selected peg */
 .peg.selected {
-    box-shadow: 0 0 15px #3498db;
+    box-shadow: 0 0 20px #ff4500, 0 0 30px #ff4500;
+    background: linear-gradient(to bottom, #ff4500, #ff6347);
 }
+
+/* Base styled as a space station deck */
 .base {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 50px;
-    background: #8B4513; /* Brown wood color */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    background: linear-gradient(to bottom, #2f4f4f, #1c2526);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
     z-index: 0;
+    border-top: 2px solid #00d4ff;
 }
+
+/* Status message */
 #status {
     margin: 10px 0;
     font-size: 1.2em;
-    color: #e74c3c;
-    font-weight: bold;
+    color: #ff4500;
+    text-shadow: 0 0 5px #ff4500;
 }
-@keyframes bounce {
-    0% { transform: translateX(-50%) translateY(0); }
-    40% { transform: translateX(-50%) translateY(-20px); }
-    60% { transform: translateX(-50%) translateY(0); }
-    80% { transform: translateX(-50%) translateY(-10px); }
-    100% { transform: translateX(-50%) translateY(0); }
+
+/* Win animation (wormhole) */
+#win-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 4;
 }
+.wormhole {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    heigh
