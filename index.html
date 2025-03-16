@@ -10,11 +10,13 @@
     <label for="discs">Number of Discs (3-8):</label>
     <input type="number" id="discs" min="3" max="8" value="3">
     <button onclick="startGame()">Start Game</button>
+    <div id="status">Click "Start Game" to begin!</div>
     <div id="game">
         <div class="peg" id="peg1"></div>
         <div class="peg" id="peg2"></div>
         <div class="peg" id="peg3"></div>
     </div>
+    <audio id="moveSound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
     <script src="script.js"></script>
 </body>
 </html>
