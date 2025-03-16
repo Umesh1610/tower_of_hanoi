@@ -1,6 +1,7 @@
 let pegs = [[], [], []];
 let numDiscs;
 let selectedPeg = null;
+let selectedDisc = null; // Track the selected disc
 const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22', '#1abc9c', '#34495e'];
 
 function startGame() {
@@ -23,7 +24,7 @@ function startGame() {
         const disc = document.createElement('div');
         disc.className = 'disc';
         disc.style.width = `${i * 20}px`;
-        disc.style.bottom = `${(numDiscs - i) * 22}px`;
+        disc.style.bottom = `${100 + (numDiscs - i) * 22}px`;
         disc.style.backgroundColor = colors[numDiscs - i];
         disc.dataset.size = i;
         document.getElementById('peg1').appendChild(disc);
@@ -42,7 +43,11 @@ function moveDisc(targetPeg) {
     if (selectedPeg === null) {
         if (pegs[targetPeg].length > 0) {
             selectedPeg = targetPeg;
-            document.getElementById(`peg${targetPeg + 1}`).classList.add('selected');
+            const pegElement = document.getElementById(`peg${targetPeg + 1}`);
+            pegElement.classList.add('selected');
+            // Highlight the top disc
+            selectedDisc = pegElement.lastChild;
+            selectedDisc.classList.add('selected-disc');
             status.textContent = `Selected peg ${targetPeg + 1}. Choose where to move the disc.`;
         }
     } else {
@@ -53,17 +58,17 @@ function moveDisc(targetPeg) {
             // Move disc
             pegs[targetPeg].push(pegs[selectedPeg].pop());
             const disc = document.getElementById(`peg${selectedPeg + 1}`).lastChild;
-            disc.style.bottom = `${pegs[targetPeg].length * 22 - 22}px`;
-            document.getElementById(`peg${targetPeg + 1}`).appendChild(disc);
+            disc.style.bottom = `${100 + (pegs[targetPeg].length - 1) * 22}px`;
             
             // Add bounce animation
             disc.classList.add('bounce');
-            setTimeout(() => disc.classList.remove('bounce'), 500); // Remove after animation
+            setTimeout(() => disc.classList.remove('bounce'), 500);
 
             // Play sound
-            moveSound.currentTime = 0; // Reset sound to start
+            moveSound.currentTime = 0;
             moveSound.play();
 
+            document.getElementById(`peg${targetPeg + 1}`).appendChild(disc);
             status.textContent = `Moved disc from peg ${selectedPeg + 1} to peg ${targetPeg + 1}.`;
 
             // Check win condition
@@ -74,7 +79,12 @@ function moveDisc(targetPeg) {
         } else {
             status.textContent = "Invalid move! A larger disc cannot be placed on a smaller one.";
         }
+        // Clear selection
         document.getElementById(`peg${selectedPeg + 1}`).classList.remove('selected');
+        if (selectedDisc) {
+            selectedDisc.classList.remove('selected-disc');
+            selectedDisc = null;
+        }
         selectedPeg = null;
     }
 }
