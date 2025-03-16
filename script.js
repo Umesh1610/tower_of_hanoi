@@ -3,7 +3,8 @@ let pegs = [[], [], []]; // Arrays to store discs on each peg (A, B, C)
 let numDiscs; // Number of discs (user input)
 let selectedPeg = null; // Currently selected peg (null if none)
 let selectedDisc = null; // Currently selected disc element (for highlighting)
-const colors = ['#ff6347', '#ffa500', '#ffd700', '#00ff00', '#1e90ff', '#ff00ff', '#ff4500', '#00ced1']; // Colors for disc edges (TARS/CASE glow)
+let stepCount = 0; // Track number of moves
+const colors = ['#ffaa44', '#ff7700', '#ff5500', '#cc4400', '#992200', '#661100', '#330000']; // Warm orange-glow colors
 
 // Starfield particle system variables
 const canvas = document.getElementById('starfield');
@@ -13,10 +14,15 @@ const numStars = 100;
 
 // Initialize starfield
 function initStarfield() {
+    if (!canvas || !ctx) {
+        console.error('Canvas or context not found!');
+        return;
+    }
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     // Create stars
+    stars = [];
     for (let i = 0; i < numStars; i++) {
         stars.push({
             x: Math.random() * canvas.width,
@@ -31,6 +37,7 @@ function initStarfield() {
 
 // Animate starfield
 function animateStarfield() {
+    if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     stars.forEach(star => {
@@ -62,10 +69,12 @@ function startGame() {
 
     // Reset game state
     pegs = [[], [], []];
+    stepCount = 0;
     document.getElementById('peg1').innerHTML = '';
     document.getElementById('peg2').innerHTML = '';
     document.getElementById('peg3').innerHTML = '';
     document.getElementById('status').textContent = "Game Started!";
+    document.getElementById('step-counter').textContent = `Steps: ${stepCount}`;
     document.getElementById('win-animation').innerHTML = '';
 
     // Initialize discs on peg A (peg1)
@@ -73,10 +82,10 @@ function startGame() {
         pegs[0].push(i);
         const disc = document.createElement('div');
         disc.className = 'disc';
-        disc.style.width = `${40 + (i - 1) * 20}px`; // Scale width with size
+        disc.style.width = `${40 + (i - 1) * 20}px`;
         disc.style.height = '20px';
-        disc.style.bottom = `${50 + (numDiscs - i) * 22}px`; // Position above base
-        disc.style.borderColor = colors[numDiscs - i]; // Glowing edge color
+        disc.style.bottom = `${50 + (numDiscs - i) * 22}px`;
+        disc.style.borderColor = colors[numDiscs - i];
         disc.dataset.size = i;
         document.getElementById('peg1').appendChild(disc);
     }
@@ -88,19 +97,20 @@ function startGame() {
 
     // Play background music (Cornfield Chase)
     const backgroundMusic = document.getElementById('backgroundMusic');
-    backgroundMusic.volume = 0.2; // Low volume to avoid overpowering
-    backgroundMusic.play();
+    backgroundMusic.volume = 0.2;
+    backgroundMusic.play().catch(error => {
+        console.error('Failed to play background music:', error);
+        document.addEventListener('click', () => backgroundMusic.play(), { once: true });
+    });
 
     // Initialize starfield
     initStarfield();
-
-    // Trigger black hole effect
-    document.getElementById('black-hole').style.opacity = '0'; // Reset for animation
 }
 
 // Handle disc movement
 function moveDisc(targetPeg) {
     const status = document.getElementById('status');
+    const stepCounter = document.getElementById('step-counter');
 
     if (selectedPeg === null) {
         // Selecting a peg
@@ -120,6 +130,54 @@ function moveDisc(targetPeg) {
         const targetTop = pegs[targetPeg].length > 0 ? pegs[targetPeg][pegs[targetPeg].length - 1] : Infinity;
 
         if (discSize < targetTop) {
-            // Valid move
             pegs[targetPeg].push(pegs[selectedPeg].pop());
-            const disc = document.getElementById(`peg${selectedPeg 
+            const disc = document.getElementById(`peg${selectedPeg + 1}`).lastChild;
+            disc.style.bottom = `${50 + (pegs[targetPeg].length - 1) * 22}px`;
+
+            disc.classList.add('bounce');
+            setTimeout(() => {
+                disc.classList.remove('bounce');
+            }, 500);
+
+            document.getElementById(`peg${targetPeg + 1}`).appendChild(disc);
+            stepCount++;
+            stepCounter.textContent = `Steps: ${stepCount}`;
+            status.textContent = `Moved disc from peg ${selectedPeg + 1} to peg ${targetPeg + 1}.`;
+
+            // Check win condition
+            if (pegs[2].length === numDiscs) {
+                const minSteps = Math.pow(2, numDiscs) - 1;
+                const message = stepCount === minSteps
+                    ? "You’ve Conquered the Cosmos! Completed in the minimum steps!"
+                    : `You’ve Conquered the Cosmos! Completed in ${stepCount} steps (Minimum: ${minSteps}).`;
+                status.textContent = message;
+                triggerWormhole();
+            }
+        } else {
+            status.textContent = "Invalid move! A larger disc cannot be placed on a smaller one.";
+        }
+
+        document.getElementById(`peg${selectedPeg + 1}`).classList.remove('selected');
+        if (selectedDisc) {
+            selectedDisc.classList.remove('selected-disc');
+            selectedDisc = null;
+        }
+        selectedPeg = null;
+    }
+}
+
+// Trigger the wormhole effect when the game is won
+function triggerWormhole() {
+    const winAnimation = document.getElementById('win-animation');
+    const wormhole = document.createElement('div');
+    wormhole.className = 'wormhole';
+    winAnimation.appendChild(wormhole);
+}
+
+// Handle window resize for starfield
+window.addEventListener('resize', () => {
+    if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+});
