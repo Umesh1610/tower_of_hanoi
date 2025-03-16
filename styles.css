@@ -11,62 +11,67 @@ h1 {
     display: flex;
     justify-content: space-around;
     margin-top: 20px;
+    position: relative;
+    height: 400px; /* Increased to accommodate base */
+}
+.peg-container {
+    position: relative;
+    width: 200px;
+}
+.peg-label {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: bold;
+    color: #333;
 }
 .peg {
-    width: 200px;
-    height: 300px;
-    position: relative;
-    background: transparent;
-    cursor: pointer;
-}
-.peg::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 50px solid transparent;
-    border-right: 50px solid transparent;
-    border-bottom: 100px solid transparent;
-    background: linear-gradient(to top, #7f8c8d, #bdc3c7);
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-    z-index: -1;
-}
-.peg::after {
-    content: '';
-    position: absolute;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
     width: 10px;
-    height: 200px;
-    background: #7f8c8d;
-    z-index: 0;
+    height: 300px;
+    background: #7f8c8d; /* Gray pole */
+    position: absolute;
+    bottom: 50px; /* Above base */
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    z-index: 1;
+    border-radius: 5px;
 }
 .disc {
-    height: 20px;
+    width: 40px; /* Base width for smallest disc */
+    height: 40px;
     margin: 2px auto;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 100px;
-    border-radius: 5px;
-    transition: all 0.5s ease;
+    bottom: 50px; /* Start above base */
+    border-radius: 50%; /* Circular */
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    z-index: 1;
+    z-index: 2;
+    /* Create hole in the center */
+    background: radial-gradient(circle at center, #7f8c8d 10%, transparent 12%, transparent 100%);
 }
 .disc.bounce {
     animation: bounce 0.5s ease;
 }
 .disc.selected-disc {
-    box-shadow: 0 0 10px #e67e22, 0 0 20px #e67e22; /* Orange glow */
-    border: 2px solid #e67e22;
+    box-shadow: 0 0 15px #ffeb3b, 0 0 25px #ffeb3b;
+    border: 3px solid #ffeb3b;
+    transform: translateX(-50%) scale(1.1);
 }
 .peg.selected {
     box-shadow: 0 0 15px #3498db;
-    border: 2px dashed #3498db;
+}
+.base {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background: #8B4513; /* Brown wood color */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 0;
 }
 #status {
     margin: 10px 0;
