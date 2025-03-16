@@ -12,9 +12,19 @@
     <button onclick="startGame()">Start Game</button>
     <div id="status">Click "Start Game" to begin!</div>
     <div id="game">
-        <div class="peg" id="peg1"></div>
-        <div class="peg" id="peg2"></div>
-        <div class="peg" id="peg3"></div>
+        <div class="peg-container">
+            <div class="peg-label">A</div>
+            <div class="peg" id="peg1"></div>
+        </div>
+        <div class="peg-container">
+            <div class="peg-label">B</div>
+            <div class="peg" id="peg2"></div>
+        </div>
+        <div class="peg-container">
+            <div class="peg-label">C</div>
+            <div class="peg" id="peg3"></div>
+        </div>
+        <div class="base"></div>
     </div>
     <audio id="moveSound" src="button.mp3"></audio>
     <script src="script.js"></script>
